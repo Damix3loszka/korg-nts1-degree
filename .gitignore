@@ -1,0 +1,4 @@
+.vscode
+dokumentacja.txt
+modules/*/*/build/
+modules/*/*/load.*
