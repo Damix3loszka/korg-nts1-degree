@@ -1,17 +1,7 @@
 #include "sound_samples.h"
 #include "userosc.h"
+#define NUM_OF_SOUNDS 4
 
-#define KICK_MIDI_MIN 45
-#define KICK_MIDI_MAX KICK_MIDI_MIN + 2
-
-#define SNARE_MIDI_MIN KICK_MIDI_MAX + 1
-#define SNARE_MIDI_MAX SNARE_MIDI_MIN + 4
-
-#define CLAP_MIDI_MIN SNARE_MIDI_MAX + 1
-#define CLAP_MIDI_MAX CLAP_MIDI_MIN + 6
-
-#define CLOSEDHAT_MIDI_MIN CLAP_MIDI_MAX + 1
-#define CLOSEDHAT_MIDI_MAX CLOSEDHAT_MIDI_MIN + 2
 enum SOUND
 {
     KICK = 0,
@@ -53,6 +43,7 @@ class sampler
     uint16_t *sounds_samples[4] = {kick_samples, snare_samples, clap_samples, closedhat_samples};
     int sounds_sample_count[4] = {KICK_SAMPLES_COUNT, SNARE_SAMPLES_COUNT, CLAP_SAMPLES_COUNT, CLOSEDHAT_SAMPLES_COUNT};
     uint8_t num_of_samples_to_interp;
+    uint8_t midi_keyboard_section_start[4] = {45, 48, 53, 60};
     float cast_sample_to_float(uint16_t sample);
     SOUND midi_to_sound(uint8_t midi_note);
 };

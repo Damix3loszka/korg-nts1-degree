@@ -61,23 +61,20 @@ float sampler::cast_sample_to_float(uint16_t sample)
 SOUND sampler::midi_to_sound(uint8_t midi_note)
 {
     SOUND sound = NONE;
-    if (KICK_MIDI_MIN <= midi_note && midi_note <= KICK_MIDI_MAX)
+    uint8_t i = 0;
+    for (i; i < NUM_OF_SOUNDS; ++i)
     {
-        sound = KICK;
-    }
-    else if (SNARE_MIDI_MIN <= midi_note && midi_note <= SNARE_MIDI_MAX)
-    {
-        sound = SNARE;
-    }
-    if (CLAP_MIDI_MIN <= midi_note && midi_note <= CLAP_MIDI_MAX)
-    {
-        sound = CLAP;
-    }
-    else if (CLOSEDHAT_MIDI_MIN <= midi_note && midi_note <= CLOSEDHAT_MIDI_MAX)
-    {
-        sound = CLOSED_HAT;
+        if (midi_note < midi_keyboard_section_start[i])
+        {
+            --i;
+            break;
+        }
     }
 
+    if ((midi_note - midi_keyboard_section_start[i]) % 2 == 0)
+    {
+        sound = static_cast<SOUND>(i);
+    }
     return sound;
 }
 
