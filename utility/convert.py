@@ -4,8 +4,8 @@ import librosa
 import glob
 from pathlib import PurePosixPath
 
-soundfiles = [PurePosixPath(file) for file in glob.glob("./audiofiles/*")]
-divider = len(soundfiles)
+soundfiles = [PurePosixPath(file) for file in glob.glob("../audiofiles/*")]
+divider = 2
 SAMPLERATE = 48000
 drum_element = ["CLAP", "CLOSEDHAT", "KICK", "SNARE"]
 

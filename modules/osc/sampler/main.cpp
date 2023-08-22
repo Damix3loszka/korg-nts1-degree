@@ -29,7 +29,6 @@ void OSC_CYCLE(const user_osc_param_t *const params, int32_t *yn, const uint32_t
         *(y++) = f32_to_q31(sig);
     }
 }
-
 void OSC_NOTEON(const user_osc_param_t *const params)
 {
     samp.start((params->pitch) >> 8);
@@ -70,6 +69,14 @@ SOUND sampler::midi_to_sound(uint8_t midi_note)
     {
         sound = SNARE;
     }
+    if (CLAP_MIDI_MIN <= midi_note && midi_note <= CLAP_MIDI_MAX)
+    {
+        sound = CLAP;
+    }
+    else if (CLOSEDHAT_MIDI_MIN <= midi_note && midi_note <= CLOSEDHAT_MIDI_MAX)
+    {
+        sound = CLOSED_HAT;
+    }
 
     return sound;
 }
@@ -81,13 +88,30 @@ void sampler::start(uint8_t midi_note)
     if (state.current_sound)
         state.play = false;
 }
+
 float sampler::next_sample()
 {
     float sample_return = 0.f;
 
     if (state.play)
     {
-        uint16_t max_sample_index = (state.current_sound == KICK ? KICK_SAMPLES_COUNT - 1 : SNARE_SAMPLES_COUNT - 1);
+        uint16_t max_sample_index = 0;
+        switch (state.current_sound)
+        {
+        case KICK:
+            max_sample_index = KICK_SAMPLES_COUNT - 1;
+            break;
+        case SNARE:
+            max_sample_index = SNARE_SAMPLES_COUNT - 1;
+            break;
+        case CLAP:
+            max_sample_index = CLAP_SAMPLES_COUNT - 1;
+            break;
+        case CLOSED_HAT:
+            max_sample_index = CLOSEDHAT_SAMPLES_COUNT - 1;
+            break;
+        };
+
         uint16_t raw_sample_1 = sounds_samples[state.current_sound][state.current_sample_index];
         uint16_t raw_sample_2 = sounds_samples[state.current_sound][state.current_sample_index + 1];
 
