@@ -61,12 +61,11 @@ float sampler::cast_sample_to_float(uint16_t sample)
 SOUND sampler::midi_to_sound(uint8_t midi_note)
 {
     SOUND sound = NONE;
-    uint8_t i = 0;
-    for (i; i < NUM_OF_SOUNDS; ++i)
+    uint8_t i = NUM_OF_SOUNDS - 1;
+    for (i; i >= 0; --i)
     {
-        if (midi_note < midi_keyboard_section_start[i])
+        if (midi_note >= midi_keyboard_section_start[i])
         {
-            --i;
             break;
         }
     }
