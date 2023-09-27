@@ -29,6 +29,7 @@ void OSC_CYCLE(const user_osc_param_t *const params, int32_t *yn, const uint32_t
         *(y++) = f32_to_q31(sig);
     }
 }
+
 void OSC_NOTEON(const user_osc_param_t *const params)
 {
     samp.start((params->pitch) >> 8);
