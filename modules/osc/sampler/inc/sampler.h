@@ -59,7 +59,26 @@ class sampler
 
 float sampler::cast_sample_to_float(uint16_t sample)
 {
-    return ((float)sample / UINT16_MAX + (state.current_sound == KICK ? KICK_MIN_SAMPLE : SNARE_MIN_SAMPLE));
+    float min_sample = 0;
+
+    switch (state.current_sound)
+    {
+    case KICK:
+        min_sample = KICK_MIN_SAMPLE;
+        break;
+    case SNARE:
+        min_sample = SNARE_MIN_SAMPLE;
+        break;
+
+    case CLAP:
+        min_sample = CLAP_MIN_SAMPLE;
+        break;
+
+    case CLOSED_HAT:
+        min_sample = CLOSEDHAT_MIN_SAMPLE;
+        break;
+    }
+    return ((float)sample / UINT16_MAX + min_sample);
 }
 
 inline SOUND sampler::midi_to_sound(uint8_t midi_note)
@@ -85,7 +104,7 @@ inline void sampler::start(uint8_t midi_note)
 {
     state.current_midi_note = midi_note;
     state.current_sound = midi_to_sound(state.current_midi_note);
-    if (state.current_sound)
+    if (state.current_sound != NONE)
         state.play = false;
 }
 
