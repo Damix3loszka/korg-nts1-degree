@@ -36,13 +36,12 @@ void MODFX_PARAM(uint8_t index, int32_t value)
     switch (index)
     {
     case k_user_modfx_param_time:
-
         filter_l.set_cutoff_freq(valf);
         filter_r.set_cutoff_freq(valf);
         break;
     case k_user_modfx_param_depth:
-        filter_l.set_filter_order(valf);
-        filter_r.set_filter_order(valf);
+        filter_l.set_filter_properties(valf);
+        filter_r.set_filter_properties(valf);
     default:
         break;
     };
