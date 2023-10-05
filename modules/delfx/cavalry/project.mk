@@ -2,7 +2,7 @@
 # Project Customization
 # #############################################################################
 
-PROJECT = ball
+PROJECT = cavalry
 
 UCSRC =
 
