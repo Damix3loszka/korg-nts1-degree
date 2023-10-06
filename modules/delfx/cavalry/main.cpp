@@ -28,12 +28,19 @@ void DELFX_PROCESS(float *xn, uint32_t frames)
 
         f32pair_t in_lr_samples = f32pair_t{in_l_sample, in_r_sample};
 
-        f32pair_t delayed_lr_samples = delay_line.readFrac(k_samplerate * offset_magnitude);
+        f32pair_t delayed_lr_samples_mixed = {0, 0};
+        f32pair_t delayed_lr_sample_main = delay_line.readFrac(k_samplerate * (offset_magnitude));
+        for (uint8_t i = 0; i < 3; ++i)
+        {
+            f32pair_t delayed_lr_sample =
+                delay_line.readFrac(k_samplerate * (offset_magnitude + i * k_samplerate * 0.3f));
+            delayed_lr_samples_mixed = f32pair_add(delayed_lr_samples_mixed, delayed_lr_sample);
+        }
+        delayed_lr_samples_mixed = f32pair_mulscal(delayed_lr_samples_mixed, 0.33f);
+        delay_line.write(f32pair_add(in_lr_samples, f32pair_mulscal(delayed_lr_samples_mixed, feedback)));
 
-        delay_line.write(f32pair_add(in_lr_samples, f32pair_mulscal(delayed_lr_samples, feedback)));
-
-        float out_l_sample = in_lr_samples.a * (1.f - mix) + delayed_lr_samples.a * mix;
-        float out_r_sample = in_lr_samples.b * (1.f - mix) + delayed_lr_samples.b * mix;
+        float out_l_sample = in_lr_samples.a * (1.f - mix) + delayed_lr_samples_mixed.a * mix;
+        float out_r_sample = in_lr_samples.b * (1.f - mix) + delayed_lr_samples_mixed.b * mix;
         in[2 * i] = out_l_sample;
         in[2 * i + 1] = out_r_sample;
     }
