@@ -2,7 +2,7 @@
 # Project Customization
 # #############################################################################
 
-PROJECT = gallop
+PROJECT = canter
 
 UCSRC =
 
