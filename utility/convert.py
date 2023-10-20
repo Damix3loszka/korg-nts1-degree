@@ -11,11 +11,9 @@ drum_element = ["CLAP", "CLOSEDHAT", "KICK", "SNARE"]
 
 for i, file in enumerate(soundfiles):
     samples, sample_rate = librosa.load(file, sr=SAMPLERATE / divider, mono=True)
-    samples = samples.astype(np.float16)
     m = samples.min()
-    n = samples.max()
     uint_max = np.iinfo(np.uint16).max
-    samples = (samples + np.abs(m)) * uint_max
+    samples = (samples - m) * uint_max
     samples = samples.astype(np.uint16)
 
     with open(f"./sample_txt/{drum_element[i].lower()}_samples.h", "w") as file:
