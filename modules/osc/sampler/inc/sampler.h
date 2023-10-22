@@ -41,7 +41,7 @@ class sampler
             interp_sample_num : 0,
             start : false
         };
-        num_of_samples_to_interp = k_samplerate / 24000 - 1;
+        sampling_ratio = k_samplerate / 24000;
     };
     float next_sample();
     void noteon();
@@ -53,7 +53,7 @@ class sampler
     uint16_t sounds_sample_count[4] = {KICK_SAMPLES_COUNT, SNARE_SAMPLES_COUNT, CLAP_SAMPLES_COUNT,
                                        CLOSEDHAT_SAMPLES_COUNT};
     float sounds_min_sample[4] = {KICK_MIN_SAMPLE, SNARE_MIN_SAMPLE, CLAP_MIN_SAMPLE, CLOSEDHAT_MIN_SAMPLE};
-    uint8_t num_of_samples_to_interp;
+    uint8_t sampling_ratio;
     uint8_t midi_keyboard_section_start[4] = {45, 48, 53, 60};
     float cast_sample_to_float(uint16_t sample);
     SOUND midi_to_sound(uint8_t midi_note);
@@ -91,29 +91,29 @@ inline float sampler::next_sample()
     {
         uint16_t sample_index = state.current_sample_index;
         SOUND sound = state.current_sound;
-        uint16_t max_sample = sounds_sample_count[sound];
-        uint16_t max_sample_index = max_sample - 1;
+        uint16_t max_sample_number = sounds_sample_count[sound];
+        uint16_t max_sample_index = max_sample_number - 1;
 
-        float samples_f[4] = {};
-
-        for (uint8_t i = 0; i < 4; ++i)
+        if (state.interp_sample_num == 0)
+            sample_return = cast_sample_to_float(sounds_samples[sound][sample_index]);
+        else
         {
-            int temp_index = sample_index - 1 + i;
-            uint16_t index = (max_sample_index + 1 + temp_index) % (max_sample_index + 1);
+            float samples_f[4] = {};
+            for (uint8_t i = 0; i < 4; ++i)
+            {
+                int temp_index = sample_index - 1 + i;
+                uint16_t index = (max_sample_number + temp_index) % (max_sample_number);
 
-            samples_f[i] = cast_sample_to_float(sounds_samples[sound][index]);
-        };
+                samples_f[i] = cast_sample_to_float(sounds_samples[sound][index]);
+            };
+            sample_return = p4_o2_interpolation(state.interp_sample_num / sampling_ratio, samples_f[0], samples_f[1],
+                                                samples_f[2], samples_f[3]);
 
-        // sample_return = linintf(state.interp_sample_num / num_of_samples_to_interp, sample_1_f, sample_2_f);
-        sample_return = p4_o2_interpolation(state.interp_sample_num / num_of_samples_to_interp, samples_f[0],
-                                            samples_f[1], samples_f[2], samples_f[3]);
-        ++state.interp_sample_num;
-        if (state.interp_sample_num == num_of_samples_to_interp)
-        {
             ++state.current_sample_index;
-            state.interp_sample_num %= num_of_samples_to_interp;
         }
-        if (state.current_sample_index >= max_sample_index)
+
+        state.interp_sample_num = (++state.interp_sample_num) % sampling_ratio;
+        if (state.current_sample_index > max_sample_index)
             state.start = false;
     }
 
