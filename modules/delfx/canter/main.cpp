@@ -56,14 +56,14 @@ void DELFX_PARAM(uint8_t index, int32_t value)
     switch (index)
     {
     case k_user_delfx_param_time:;
-        pace = 1.f - (valf * 0.5f + 0.3f);
+        pace = 1.f - (valf * 0.4f + 0.3f);
         clop_speed = 0.1f + (1.f - (valf * 0.8f + 0.1f)) * 0.01f;
 
         break;
 
     case k_user_delfx_param_depth:
 
-        feedback = valf * 0.5 + 0.2f;
+        feedback = valf * 0.4f + 0.2f;
         break;
 
     case k_user_delfx_param_shift_depth:
