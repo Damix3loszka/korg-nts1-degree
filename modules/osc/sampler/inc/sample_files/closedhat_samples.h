@@ -1,5 +1,4 @@
-#include "userosc.h"
-#define CLOSEDHAT_SAMPLERATE 24000.0
+#include "stdint.h"
 #define CLOSEDHAT_SAMPLES_COUNT 2510
 #define CLOSEDHAT_MIN_SAMPLE -0.369274765253067
 uint16_t closedhat_samples[CLOSEDHAT_SAMPLES_COUNT] = {

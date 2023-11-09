@@ -1,5 +1,4 @@
-#include "userosc.h"
-#define KICK_SAMPLERATE 24000.0
+#include "stdint.h"
 #define KICK_SAMPLES_COUNT 4486
 #define KICK_MIN_SAMPLE -0.4878765344619751
 uint16_t kick_samples[KICK_SAMPLES_COUNT] = {

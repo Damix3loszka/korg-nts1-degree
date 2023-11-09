@@ -1,5 +1,4 @@
-#include "userosc.h"
-#define CLAP_SAMPLERATE 24000.0
+#include "stdint.h"
 #define CLAP_SAMPLES_COUNT 5136
 #define CLAP_MIN_SAMPLE -0.3191893696784973
 uint16_t clap_samples[CLAP_SAMPLES_COUNT] = {

@@ -1,6 +1,5 @@
-#include "sound_samples.h"
+#include "audio_samples.h"
 #include "userosc.h"
-#define NUM_OF_SOUNDS 4
 
 enum SOUND
 {
@@ -41,7 +40,7 @@ class sampler
             interp_sample_num : 0,
             start : false
         };
-        sampling_ratio = k_samplerate / 24000;
+        sampling_ratio = k_samplerate / AUDIO_SAMPLERATE;
     };
     float next_sample();
     void noteon();

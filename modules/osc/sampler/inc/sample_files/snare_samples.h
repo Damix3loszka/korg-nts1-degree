@@ -1,5 +1,4 @@
-#include "userosc.h"
-#define SNARE_SAMPLERATE 24000.0
+#include "stdint.h"
 #define SNARE_SAMPLES_COUNT 2041
 #define SNARE_MIN_SAMPLE -0.30440831184387207
 uint16_t snare_samples[SNARE_SAMPLES_COUNT] = {
