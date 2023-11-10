@@ -14,7 +14,8 @@ audiofiles_samplerate = config["audiofiles_samplerate"]
 downsampling_factor = config["downsampling_factor"]
 audiofile_names = config["audiofile_names"]
 output_path = path.abspath(config["output_path"])
-
+max_size = 31 * 1024
+full_size = 0
 
 with open(f"{output_path}/../audio_samples.h", "w") as includefile:
     for i, filepath in enumerate(audiofile_paths):
@@ -25,6 +26,8 @@ with open(f"{output_path}/../audio_samples.h", "w") as includefile:
         uint_max = np.iinfo(np.uint16).max
         samples = (samples - m) * uint_max
         samples = samples.astype(np.uint16)
+
+        full_size += len(samples) * 2
 
         converted_audio_filename = f"{audiofile_names[i].lower()}_samples.h"
 
@@ -62,3 +65,7 @@ with open(f"{output_path}/../audio_samples.h", "w") as includefile:
     for name in audiofile_names:
         includefile.write(f"{name}_MIN_SAMPLE,")
     includefile.write("};\n")
+
+    print(
+        f"Size: {full_size}\nMax size:{max_size}\nFits: {'YES' if full_size<max_size else 'NO'}"
+    )
