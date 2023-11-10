@@ -5,6 +5,8 @@
 #define k_samplerate_recipf (2.08333333333333e-005f)
 #define k_samplerate 48000
 #define k_samplerate_2 24000
+#define FILTER_MIN_FREQ k_samplerate_2 - 150
+#define FILTER_MAX_FREQ 150
 enum TYPE
 {
     LP,
@@ -89,11 +91,15 @@ inline float butter_filter::process_sample(float sample)
 inline void butter_filter::set_cutoff_freq(float frac)
 {
     cutoff_frequency = k_samplerate_2 * frac;
-    if (filter_order == 3)
-    {
-        cutoff_frequency = cutoff_frequency < 300 ? 300 : cutoff_frequency;
-    }
 
+    if (cutoff_frequency < FILTER_MIN_FREQ)
+    {
+        cutoff_frequency = FILTER_MIN_FREQ;
+    }
+    if (cutoff_frequency > FILTER_MAX_FREQ)
+    {
+        cutoff_frequency = FILTER_MIN_FREQ;
+    }
     filter_coefficients.recalculate(filter_order, cutoff_frequency, filter_type);
 }
 
