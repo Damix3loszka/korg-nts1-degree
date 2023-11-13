@@ -1,0 +1,17 @@
+{
+    "audiofiles_samplerate": 48000,
+    "downsampling_factor": 2,
+    "audiofile_paths": [
+        "../audiofiles/Kick08.wav",
+        "../audiofiles/Snare04.wav",
+        "../audiofiles/Clap01.wav",
+        "../audiofiles/Closedhat01.wav"
+    ],
+    "audiofile_names": [
+        "KICK",
+        "SNARE",
+        "CLAP",
+        "CLOSEDHAT"
+    ],
+    "output_path": "../inc/sample_files/"
+}
