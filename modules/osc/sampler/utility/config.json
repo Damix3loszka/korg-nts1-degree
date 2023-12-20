@@ -1,6 +1,7 @@
 {
     "audiofiles_samplerate": 48000,
     "downsampling_factor": 2,
+    "midi_start": 45,
     "audiofile_paths": [
         "../audiofiles/Kick08.wav",
         "../audiofiles/Snare04.wav",

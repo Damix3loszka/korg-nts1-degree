@@ -1,14 +1,5 @@
 #include "audio_samples.h"
 #include "userosc.h"
-#define MIDI_START 45
-enum SOUND
-{
-    KICK = 0,
-    SNARE = 1,
-    CLAP = 2,
-    CLOSED_HAT = 3,
-    NONE = 4
-};
 
 struct playback_state
 {
@@ -35,6 +26,7 @@ class sampler
     uint16_t **sounds_samples = audio_samples;
     uint16_t *sounds_sample_count = audio_sample_count;
     float *sounds_min_sample = audio_min_sample;
+    float *sounds_attenuation_factor = audio_attenuation_factor;
     uint8_t sampling_ratio;
     uint8_t midi_keyboard_section_start[4] = {MIDI_START, MIDI_START + 3, MIDI_START + 8,
                                               MIDI_START + 15}; // 45,48,53,60
@@ -44,7 +36,8 @@ class sampler
 
 float sampler::cast_sample_to_float(uint16_t sample)
 {
-    return ((float)sample / UINT16_MAX + sounds_min_sample[state.current_sound]);
+    return ((float)sample / UINT16_MAX / sounds_attenuation_factor[state.current_sound] +
+            sounds_min_sample[state.current_sound]);
 }
 
 inline SOUND sampler::midi_to_sound(uint8_t midi_note)
@@ -82,7 +75,7 @@ inline float sampler::next_sample()
         else
         {
             float sample_1 = cast_sample_to_float(sounds_samples[sound][sample_index]);
-            float sample_2 = cast_sample_to_float(sounds_samples[sound][sample_index + 1]);
+            float sample_2 = cast_sample_to_float(sounds_samples[sound][(sample_index + 1) % max_sample_index]);
             sample_return = linintf(state.interpolation_counter / sampling_ratio, sample_1, sample_2);
         }
 
