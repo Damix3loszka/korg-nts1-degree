@@ -1,24 +1,24 @@
 #include "usermodfx.h"
 #include <algorithm>
-#include <array>
-#include <math.h>
 #define k_samplerate_recipf (2.08333333333333e-005f)
 #define k_samplerate 48000
 #define k_samplerate_2 24000
-#define FILTER_MIN_FREQ k_samplerate_2 - 150
-#define FILTER_MAX_FREQ 150
+#define FILTER_MIN_FREQ 20
+#define FILTER_MAX_FREQ k_samplerate_2 - 100
+
 enum TYPE
 {
     LP,
     HP
 };
+
 struct coeffs
 {
     float z_y[4] = {0, 0, 0, 0};
     float z_x = 0;
     void recalculate(uint8_t order, float cutoff_frequency, TYPE type)
     {
-        float cutoff_frequency1 = fasttanf(cutoff_frequency * k_samplerate_recipf / 2);
+        float cutoff_frequency1 = fasttanf(2 * M_PI * cutoff_frequency * k_samplerate_recipf / 2);
         float cutoff_frequency2 = fastpowf(cutoff_frequency1, 2);
         float cutoff_frequency3 = fastpowf(cutoff_frequency1, 3);
         for (uint8_t i = 0; i < 4; ++i)
@@ -33,7 +33,7 @@ struct coeffs
             break;
         case 2:
             z_y[0] = cutoff_frequency2 + cutoff_frequency1 * M_SQRT2 + 1;
-            z_y[1] = cutoff_frequency2 - 1;
+            z_y[1] = 2 * (cutoff_frequency2 - 1);
             z_y[2] = cutoff_frequency2 - cutoff_frequency1 * M_SQRT2 + 1;
             break;
         case 3:
@@ -51,6 +51,7 @@ struct coeffs
         }
     };
 };
+
 class butter_filter
 {
   public:
@@ -98,7 +99,7 @@ inline void butter_filter::set_cutoff_freq(float frac)
     }
     if (cutoff_frequency > FILTER_MAX_FREQ)
     {
-        cutoff_frequency = FILTER_MIN_FREQ;
+        cutoff_frequency = FILTER_MAX_FREQ;
     }
     filter_coefficients.recalculate(filter_order, cutoff_frequency, filter_type);
 }
@@ -136,6 +137,7 @@ inline void butter_filter::set_filter_properties(float frac)
 
     filter_coefficients.recalculate(filter_order, cutoff_frequency, filter_type);
 }
+
 inline float butter_filter::process_sample_o1(float sample)
 {
     float x = 0;
@@ -155,6 +157,7 @@ inline float butter_filter::process_sample_o1(float sample)
     delay_y[0] = out;
     return out;
 }
+
 inline float butter_filter::process_sample_o2(float sample)
 {
     float z0_y_coeff = filter_coefficients.z_y[0];
@@ -174,7 +177,7 @@ inline float butter_filter::process_sample_o2(float sample)
     }
     x *= z_x_coeff;
 
-    float y = 2 * z1_y_coeff * delay_y[0] + z2_y_coeff * delay_y[1];
+    float y = z1_y_coeff * delay_y[0] + z2_y_coeff * delay_y[1];
     float out = (x - y) / z0_y_coeff;
 
     std::swap(delay_x[0], delay_x[1]);

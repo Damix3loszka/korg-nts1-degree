@@ -5,8 +5,8 @@ butter_filter filter_l, filter_r;
 
 void MODFX_INIT(uint32_t platform, uint32_t api)
 {
-    filter_l.set_cutoff_freq(1);
-    filter_r.set_cutoff_freq(1);
+    filter_l.set_cutoff_freq(1.f);
+    filter_r.set_cutoff_freq(1.f);
 };
 
 void MODFX_PROCESS(const float *main_xn, float *main_yn, const float *sub_xn, float *sub_yn, uint32_t frames)
@@ -34,6 +34,7 @@ void MODFX_PARAM(uint8_t index, int32_t value)
     case k_user_modfx_param_depth:
         filter_l.set_filter_properties(valf);
         filter_r.set_filter_properties(valf);
+        break;
     default:
         break;
     };
