@@ -56,7 +56,7 @@ void DELFX_PARAM(uint8_t index, int32_t value)
     {
     case k_user_delfx_param_time:
         sequence_interval = (1.f - (valf * 0.4f + 0.3f)) * k_samplerate;
-        step_interval = (0.1f + (1.f - (valf * 0.8f + 0.1f)) * 0.01f) * k_samplerate;
+        step_interval = (0.1f + (1.f - (valf * 0.8f + 0.1f)) * 0.1f) * k_samplerate;
         break;
 
     case k_user_delfx_param_depth:
