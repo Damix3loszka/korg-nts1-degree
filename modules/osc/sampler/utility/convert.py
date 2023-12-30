@@ -14,6 +14,7 @@ audiofiles_samplerate = config["audiofiles_samplerate"]
 downsampling_factor = config["downsampling_factor"]
 audiofile_names = config["audiofile_names"]
 output_path = path.abspath(config["output_path"])
+midi_start = config["midi_start"]
 max_size = 31 * 1024
 full_size = 0
 
@@ -23,8 +24,9 @@ with open(f"{output_path}/../audio_samples.h", "w") as includefile:
             filepath, sr=audiofiles_samplerate / downsampling_factor, mono=True
         )
         m = samples.min()
+        attenuation_factor = 0.5 / abs(m) if abs(m) > 0.5 else 1
         uint_max = np.iinfo(np.uint16).max
-        samples = (samples - m) * uint_max
+        samples = (samples - m) * attenuation_factor * uint_max
         samples = samples.astype(np.uint16)
 
         full_size += len(samples) * 2
@@ -37,6 +39,9 @@ with open(f"{output_path}/../audio_samples.h", "w") as includefile:
                 f"#define {audiofile_names[i]}_SAMPLES_COUNT {len(samples)}\n"
             )
             samplefile.write(f"#define {audiofile_names[i]}_MIN_SAMPLE {m}\n")
+            samplefile.write(
+                f"#define {audiofile_names[i]}_ATTENUATION_FACTOR {attenuation_factor}\n"
+            )
             samplefile.write(
                 f"uint16_t {audiofile_names[i].lower()}_samples[{audiofile_names[i]}_SAMPLES_COUNT] = "
                 + "{\n"
@@ -51,6 +56,7 @@ with open(f"{output_path}/../audio_samples.h", "w") as includefile:
         f"#define AUDIO_SAMPLERATE {audiofiles_samplerate/downsampling_factor}\n"
     )
     includefile.write(f"#define AUDIO_COUNT {len(audiofile_paths)}\n")
+    includefile.write(f"#define MIDI_START {midi_start}\n")
     includefile.write("uint16_t *audio_samples[4] = {")
     for name in audiofile_names:
         includefile.write(f"{name.lower()}_samples,")
@@ -65,6 +71,18 @@ with open(f"{output_path}/../audio_samples.h", "w") as includefile:
     for name in audiofile_names:
         includefile.write(f"{name}_MIN_SAMPLE,")
     includefile.write("};\n")
+
+    includefile.write("float audio_attenuation_factor[4] = {")
+    for name in audiofile_names:
+        includefile.write(f"{name}_ATTENUATION_FACTOR,")
+    includefile.write("};\n")
+
+    includefile.write("enum SOUND \n{\n")
+    for i, audio_name in enumerate(audiofile_names):
+        includefile.write(f"{audio_name.upper()},\n")
+
+    includefile.write(f"NONE,\n")
+    includefile.write("};")
 
     print(
         f"Size: {full_size}\nMax size:{max_size}\nFits: {'YES' if full_size<max_size else 'NO'}"
