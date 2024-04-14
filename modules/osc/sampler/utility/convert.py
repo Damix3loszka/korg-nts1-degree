@@ -1,7 +1,6 @@
 #!/bin/python3
 import numpy as np
 import librosa
-import glob
 from os import path
 import json
 
@@ -10,7 +9,6 @@ with open("./config.json") as file:
 
 
 audiofile_paths = [path.abspath(p) for p in config["audiofile_paths"]]
-audiofiles_samplerate = config["audiofiles_samplerate"]
 downsampling_factor = config["downsampling_factor"]
 audiofile_names = config["audiofile_names"]
 output_path = path.abspath(config["output_path"])
@@ -21,7 +19,7 @@ full_size = 0
 with open(f"{output_path}/../audio_samples.h", "w") as includefile:
     for i, filepath in enumerate(audiofile_paths):
         samples, sample_rate = librosa.load(
-            filepath, sr=audiofiles_samplerate / downsampling_factor, mono=True
+            filepath, sr=48000 / downsampling_factor, mono=True
         )
         m = samples.min()
         attenuation_factor = 0.5 / abs(m) if abs(m) > 0.5 else 1
@@ -53,7 +51,7 @@ with open(f"{output_path}/../audio_samples.h", "w") as includefile:
             f'#include "./{path.basename(output_path)}/{converted_audio_filename}"\n'
         )
     includefile.write(
-        f"#define AUDIO_SAMPLERATE {audiofiles_samplerate/downsampling_factor}\n"
+        f"#define AUDIO_SAMPLERATE {48000/downsampling_factor}\n"
     )
     includefile.write(f"#define AUDIO_COUNT {len(audiofile_paths)}\n")
     includefile.write(f"#define MIDI_START {midi_start}\n")

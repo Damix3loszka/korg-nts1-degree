@@ -1,12 +1,16 @@
-## Modulation Effect Template Project 
+# Butter
 
-This project can be used as a basis for custom modulation effects. **Refer to [parent platform](../) for build instructions.**
+Modulation effect module containing a Butterworth filter with variable cutoff frequency and variable order in lowpass and highpass mode.
 
-### FAQ
+Transfer function was derived using bilinear transformation.
 
-#### Why does MODFX_PROCESS() have *main* and *sub* inputs and outputs?
+### Controls
+| Knob | Function         |
+| ---- | ---------------- |
+| A    | Cutoff frequency |
+| B    | Order and mode   |
 
-The modulation effect API was originally designed for the prologue synthesizer which allows each *main* and *sub* timbre audio to be processed independently by the modulation effect section.
-This interface was maintained in order to preserve API compatibility between the minilogue xd and prologue. 
-For an effect to properly work on the prologue, both inputs should be processed in the same way and the result written to the corresponding output.
+Filter mode is selected by turning B knob to the left for lowpass mode and right for highpass mode. Orders are selected by the degree of rotation to either side (e.g. turning B knob all the way to the left will select 3rd order lowpass mode).
+
+
 
